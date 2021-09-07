@@ -35,7 +35,7 @@ proxyResources = [
     'https://www.proxyscan.io/download?type=socks5',
 ]
  
-connectProxyHeader = f"GET / HTTP/1.1\r\nHost: {targetHost}\r\n" + "\r\n"
+connectProxyHeader = "GET / HTTP/1.1\r\nHost: " + targetHost + "\r\n\r\n"
  
 def socksCrawler():
     global socksFile, socksResources
