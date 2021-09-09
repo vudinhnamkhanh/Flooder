@@ -149,7 +149,8 @@ for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
 for indexPicker in range(threadNumber):
-    thread = multiprocessing.Process(target=Flood, args=(indexPicker, ))
-    thread.setDaemon = False
+    thread = multiprocessing.Process(target=Flood, args=(indexPicker, ), daemon=True)
     thread.start()
+while True:
+    input()
 
