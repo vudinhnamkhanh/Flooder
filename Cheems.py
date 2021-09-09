@@ -144,7 +144,7 @@ for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
 for indexPicker in range(5000):
-    thread = threading.Thread(target=Flood)
+    thread = multiprocessing.Process(target=Flood)
     thread.setDaemon = False
     thread.start()
 
