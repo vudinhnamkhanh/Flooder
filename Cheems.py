@@ -122,7 +122,7 @@ def Flood():
         except socket.error:
             time.sleep(.1)
         except:
-            time.sleep(1)
+            pass
 
 if "--socksCrawler" in sys.argv:
     socksCrawler()
