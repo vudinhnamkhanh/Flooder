@@ -118,7 +118,7 @@ def Flood():
             for _ in range(100):
                 s.send(floodHeader)
             s.close()
-            print("Flood sent " + proxy[0] + ":" + proxy[1], end="\r")
+            print("Flood sent " + proxy[0] + ":" + proxy[1])
         except:
             pass
 
