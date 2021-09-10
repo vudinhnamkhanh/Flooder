@@ -152,6 +152,6 @@ for indexPicker in range(threadNumber):
 for process in processList:
     process.join()"""
 darkdarkbruhbruhlmaolmao = multiprocessing.Pool(processes=threadNumber)
-darkdarkbruhbruhlmaolmao.map(Flood, range(threadNumber))
+darkdarkbruhbruhlmaolmao.map(Flood, range(500))
 """while True:
     input()"""
