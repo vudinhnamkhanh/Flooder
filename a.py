@@ -138,7 +138,7 @@ for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
 for indexPicker in range(threadNumber):
-    process = process.Process(target=Flood, args=(indexPicker, ))
+    process = multiprocessing.Process(target=Flood, args=(indexPicker, ))
     process.setDaemon = True
     process.start()
  
