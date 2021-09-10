@@ -148,5 +148,5 @@ for _ in range(100):
 def StartAttack():
     for indexPicker in range(threadNumber):
         process = multiprocessing.Process(target=Flood)
-        process.Daemon = False
+        process.setDaemon = False
         process.start()
